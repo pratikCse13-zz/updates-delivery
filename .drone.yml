@@ -1,0 +1,163 @@
+---
+  pipeline: 
+    000_compile-code: 
+      commands: 
+        - "npm i"
+        - "npm run build"
+      image: "node:8.10-alpine"
+      when: 
+        branch: 
+          exclude: "master"
+        event: "push"
+    001_dev-plan-message-delivery-service-eu-central-1: 
+      actions: 
+        - "validate"
+        - "plan"
+      environment: 
+        TF_DATA_DIR: ".terraform_dev_eu-central-1"
+      image: "jmccann/drone-terraform:5.3-0.11.14"
+      init_options: 
+        backend-config: 
+          - "config/accountId_dev/eu-central-1/config.remote"
+      role_arn_to_assume: "arn:aws:iam::accountId:role/role-name"
+      root_dir: "terraform/message-delivery"
+      var_files: 
+        - "config/accountId_dev/eu-central-1/config.remote"
+        - "config/accountId_dev/eu-central-1/terraform.tfvars"
+      vars: 
+        build_number: "${DRONE_BUILD_NUMBER:0:10}"
+        repo: "${DRONE_REPO}"
+        version: "${DRONE_COMMIT_SHA:0:10}"
+      when: 
+        branch: 
+          exclude: "master"
+        event: "push"
+    002_compile-code: 
+      commands: 
+        - "npm i"
+        - "npm run build"
+      image: "node:8.10-alpine"
+      when: 
+        branch: "master"
+        event: "push"
+    003_dev-package-artefact: 
+      commands: "zip -r code.zip ./dist ./node_modules package.json"
+      image: "kramos/alpine-zip"
+      when: 
+        branch: "master"
+        event: "push"
+    004_dev-deploy-artefact-eu-central-1: 
+      bucket_prefix: "lambda-artefacts"
+      file: "code.zip"
+      image: "nzad/drone-lambda-artefact-pusher"
+      regions: "eu-central-1"
+      version: "${DRONE_COMMIT_SHA:0:10}"
+      when: 
+        branch: "master"
+        event: "push"
+    005_dev-plan-message-delivery-service-eu-central-1: 
+      actions: 
+        - "validate"
+        - "plan"
+      environment: 
+        TF_DATA_DIR: ".terraform_dev_eu-central-1"
+      image: "jmccann/drone-terraform:5.3-0.11.14"
+      init_options: 
+        backend-config: 
+          - "config/accountId_dev/eu-central-1/config.remote"
+      role_arn_to_assume: "arn:aws:iam::accountId:role/role-name"
+      root_dir: "terraform/message-delivery"
+      var_files: 
+        - "config/accountId_dev/eu-central-1/config.remote"
+        - "config/accountId_dev/eu-central-1/terraform.tfvars"
+      vars: 
+        build_number: "${DRONE_BUILD_NUMBER:0:10}"
+        repo: "${DRONE_REPO}"
+        version: "${DRONE_COMMIT_SHA:0:10}"
+      when: 
+        branch: "master"
+        event: "push"
+    006_dev-deploy-message-delivery-service-eu-central-1: 
+      environment: 
+        TF_DATA_DIR: ".terraform_dev_eu-central-1"
+      image: "jmccann/drone-terraform:5.3-0.11.14"
+      init_options: 
+        backend-config: 
+          - "config/accountId_dev/eu-central-1/config.remote"
+      role_arn_to_assume: "arn:aws:iam::accountId:role/role-name"
+      root_dir: "terraform/message-delivery"
+      var_files: 
+        - "config/accountId_dev/eu-central-1/config.remote"
+        - "config/accountId_dev/eu-central-1/terraform.tfvars"
+      vars: 
+        build_number: "${DRONE_BUILD_NUMBER:0:10}"
+        repo: "${DRONE_REPO}"
+        version: "${DRONE_COMMIT_SHA:0:10}"
+      when: 
+        branch: "master"
+        event: "push"
+    007_compile-code: 
+      commands: 
+        - "npm i"
+        - "npm run build"
+      image: "node:8.10-alpine"
+      when: 
+        environment: "dev"
+        event: "deployment"
+    008_dev-package-artefact: 
+      commands: "zip -r code.zip ./dist ./node_modules package.json"
+      image: "kramos/alpine-zip"
+      when: 
+        environment: "dev"
+        event: "deployment"
+    009_dev-deploy-artefact-eu-central-1: 
+      bucket_prefix: "lambda-artefacts"
+      file: "code.zip"
+      image: "nzad/drone-lambda-artefact-pusher"
+      regions: "eu-central-1"
+      version: "${DRONE_COMMIT_SHA:0:10}"
+      when: 
+        environment: "dev"
+        event: "deployment"
+    010_dev-plan-message-delivery-service-eu-central-1: 
+      actions: 
+        - "validate"
+        - "plan"
+      environment: 
+        TF_DATA_DIR: ".terraform_dev_eu-central-1"
+      image: "jmccann/drone-terraform:5.3-0.11.14"
+      init_options: 
+        backend-config: 
+          - "config/accountId_dev/eu-central-1/config.remote"
+      role_arn_to_assume: "arn:aws:iam::accountId:role/role-name"
+      root_dir: "terraform/message-delivery"
+      var_files: 
+        - "config/accountId_dev/eu-central-1/config.remote"
+        - "config/accountId_dev/eu-central-1/terraform.tfvars"
+      vars: 
+        build_number: "${DRONE_BUILD_NUMBER:0:10}"
+        repo: "${DRONE_REPO}"
+        version: "${DRONE_COMMIT_SHA:0:10}"
+      when: 
+        environment: "dev"
+        event: "deployment"
+    011_dev-deploy-message-delivery-service-eu-central-1: 
+      environment: 
+        TF_DATA_DIR: ".terraform_dev_eu-central-1"
+      image: "jmccann/drone-terraform:5.3-0.11.14"
+      init_options: 
+        backend-config: 
+          - "config/accountId_dev/eu-central-1/config.remote"
+      role_arn_to_assume: "arn:aws:iam::accountId:role/role-name"
+      root_dir: "terraform/message-delivery"
+      var_files: 
+        - "config/accountId_dev/eu-central-1/config.remote"
+        - "config/accountId_dev/eu-central-1/terraform.tfvars"
+      vars: 
+        build_number: "${DRONE_BUILD_NUMBER:0:10}"
+        repo: "${DRONE_REPO}"
+        version: "${DRONE_COMMIT_SHA:0:10}"
+      when: 
+        environment: "dev"
+        event: "deployment"
+

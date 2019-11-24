@@ -1,0 +1,5 @@
+region         = "eu-central-1"
+bucket         = "accountId-tfstate"
+key            = "services/message-delivery/dev/eu-central-1/message-delivery-lambda.tfstate"
+dynamodb_table = "accountId-tfstate-lock"
+profile        = "accountId"

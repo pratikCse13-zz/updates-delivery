@@ -1,0 +1,50 @@
+{
+    "name": "updates-delivery",
+    "version": "1.0.0",
+    "description": "Service responsible for delivery of updates to user",
+    "scripts": {
+        "build-pipeline": "jsonnet ./drone_jsonnet/drone.jsonnet | json2yaml > ./.drone.yml",
+        "lint": "tslint -c tslint.json -p tsconfig.json --fix",
+        "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts'",
+        "tslint-check": "tslint-config-prettier-check ./tslint.json",
+        "lint-all": "npm run lint && npm run format && npm run tslint-check && terraform fmt ./terraform",
+        "build": "rm -rf dist && tsc",
+        "format-jsonnet": "jsonnet fmt ./drone_jsonnet/drone.jsonnet -i"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/updates-delivery.git"
+    },
+    "author": "pratik",
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run lint-all && ./drone_jsonnet/verify_if_drone_is_up_to_date.sh && npm run build"
+        }
+    },
+    "engines": {
+        "node": "10.15"
+    },
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/updates-delivery/issues"
+    },
+    "homepage": "https://github.com/updates-delivery#readme",
+    "dependencies": {
+        "@types/nodemailer": "^6.2.2",
+        "aws-lambda": "^0.1.2",
+        "aws-sdk": "^2.575.0",
+        "jsonwebtoken": "^8.5.1",
+        "jwks-rsa": "^1.4.0",
+        "nodemailer": "^6.3.1"
+    },
+    "devDependencies": {
+        "@types/aws-lambda": "^8.10.24",
+        "@types/jsonwebtoken": "^8.3.5",
+        "@types/node": "^11.13.7",
+        "husky": "^1.3.1",
+        "prettier": "1.17.0",
+        "tslint": "^5.14.0",
+        "tslint-config-prettier": "^1.18.0",
+        "typescript": "3.5.2"
+    }
+}
