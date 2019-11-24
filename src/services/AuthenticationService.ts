@@ -108,8 +108,7 @@ export class AuthenticationService {
   }
 
   private getEmailFromPayload(verifiedPayload: any): string {
-    const email: string =
-      verifiedPayload["email"] || "";
+    const email: string = verifiedPayload.email || "";
     if (email === "") {
       console.error(
         "User email is not present in Auth0 access_token. Expected claim 'email' to contain an email address. Check the Auth0 rules."

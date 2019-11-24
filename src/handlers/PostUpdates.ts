@@ -17,7 +17,7 @@ exports.handler = async (event: Event) => {
     console.log(err);
     return {
       statusCode: 500,
-      body: 'something went wrong!'
+      body: "something went wrong!"
     };
   }
   return {
