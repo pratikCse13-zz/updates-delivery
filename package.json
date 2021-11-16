@@ -32,7 +32,7 @@
     "dependencies": {
         "@types/nodemailer": "^6.2.2",
         "aws-lambda": "^0.1.2",
-        "aws-sdk": "^2.575.0",
+        "aws-sdk": "^2.814.0",
         "jsonwebtoken": "^8.5.1",
         "jwks-rsa": "^1.4.0",
         "nodemailer": "^6.3.1"
